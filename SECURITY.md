@@ -44,6 +44,5 @@ Do not post real keys, copied Bark URLs, message text, or private configuration
 in public issues. Use [GitHub private vulnerability reporting](https://github.com/NeroSong/omabark/security/advisories/new)
 to report a suspected vulnerability confidentially.
 
-See [VALIDATION.md](VALIDATION.md) for the dated local review and remaining
-release checks. Marketplace review applies to an exact submitted commit and
+Marketplace review applies to an exact submitted commit and
 does not automatically cover later edits.

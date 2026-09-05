@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "nerosong.omabark",
   "name": "OmaBark",
-  "version": "0.3.0",
+  "version": "1.0.1",
   "author": "NeroSong",
   "license": "MIT",
   "description": "Send text from your Omarchy bar to your Apple device with Bark.",

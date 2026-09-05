@@ -66,8 +66,7 @@ public dotfile repositories. The selected Bark server can read notification
 content. There is no telemetry, clipboard monitoring or message history.
 
 Like other Omarchy plugins, OmaBark runs with your user permissions, without a
-sandbox. See [SECURITY.md](SECURITY.md) for security details and
-[VALIDATION.md](VALIDATION.md) for tests and release checks.
+sandbox. See [SECURITY.md](SECURITY.md) for security details.
 
 ## Uninstall
 

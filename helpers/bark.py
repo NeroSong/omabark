@@ -215,7 +215,7 @@ class NoRedirect(request.HTTPRedirectHandler):
 def post(server, payload):
     body = json.dumps(payload, ensure_ascii=False).encode("utf-8")
     req = request.Request(server + "/push", data=body, headers={
-        "Content-Type": "application/json; charset=utf-8", "User-Agent": "omabark/0.3.0"
+        "Content-Type": "application/json; charset=utf-8", "User-Agent": "omabark/1.0.1"
     }, method="POST")
     try:
         with request.build_opener(NoRedirect()).open(req, timeout=8) as response:
