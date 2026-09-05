@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "id": "nerosong.omabark",
+  "name": "OmaBark",
+  "version": "0.3.0",
+  "author": "NeroSong",
+  "license": "MIT",
+  "description": "Send text from your Omarchy bar to your Apple device with Bark.",
+  "kinds": ["bar-widget"],
+  "entryPoints": { "barWidget": "BarWidget.qml" },
+  "barWidget": {
+    "displayName": "OmaBark",
+    "category": "Utilities",
+    "allowMultiple": false,
+    "defaultSection": "right"
+  }
+}

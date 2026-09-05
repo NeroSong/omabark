@@ -1,0 +1,76 @@
+#!/usr/bin/python3 -I
+"""Send text using OmaBark's saved device, without a desktop session."""
+import argparse
+import json
+from pathlib import Path
+import subprocess
+import sys
+
+MAX_TEXT = 32000
+
+
+def main(argv=None):
+    parser = argparse.ArgumentParser(
+        prog="omabark", description="Send text to your configured Apple device with Bark.",
+        epilog="Configure your device once in OmaBark. The saved notification title is reused.")
+    commands = parser.add_subparsers(dest="command", required=True)
+    send = commands.add_parser("send", help="Send a message to the saved device")
+    send.add_argument("text", nargs="?", help="Quoted message; omit or use - to read UTF-8 from stdin")
+    send.add_argument("--json", action="store_true", help="Print a machine-readable result")
+    args = parser.parse_args(argv)
+
+    def finish(result):
+        if args.json:
+            print(json.dumps(result, ensure_ascii=False))
+        elif result.get("ok"):
+            print(f"Accepted ({result['sent']} notification(s)).")
+        else:
+            message = result.get("message", "Send failed.")
+            if "total" in result:
+                message += f" {result.get('sent', 0)}/{result['total']} parts accepted. Check your device before retrying."
+            print(f"omabark: {message}", file=sys.stderr)
+        return 0 if result.get("ok") else 1
+
+    try:
+        if args.text is None or args.text == "-":
+            if sys.stdin.isatty():
+                send.error("provide a quoted message or pipe UTF-8 text into this command")
+            raw = sys.stdin.buffer.read(MAX_TEXT + 1)
+        else:
+            raw = args.text.encode("utf-8")
+        if len(raw) > MAX_TEXT:
+            return finish({"ok": False, "message": "Message exceeds 32,000 UTF-8 bytes."})
+        body = raw.decode("utf-8")
+        if not body.strip():
+            return finish({"ok": False, "message": "Message is empty."})
+        helper = Path(__file__).resolve().parent / "helpers" / "bark.py"
+        if not helper.is_file():
+            return finish({"ok": False, "message": "OmaBark helper is missing. Reinstall the plugin."})
+        completed = subprocess.run(
+            ["/usr/bin/timeout", "--kill-after=2", "170", "/usr/bin/python3", "-I", str(helper)],
+            input=json.dumps({"action": "send", "body": body}, ensure_ascii=False).encode("utf-8"),
+            capture_output=True, timeout=175)
+        if completed.returncode in (124, 137):
+            return finish({"ok": False, "message": "Timed out; delivery is unconfirmed. Check your device before retrying."})
+        try:
+            result = json.loads(completed.stdout)
+            if not isinstance(result, dict) or not isinstance(result.get("ok"), bool):
+                raise ValueError
+            if result["ok"] and (completed.returncode != 0 or not isinstance(result.get("sent"), int)):
+                raise ValueError
+        except (ValueError, UnicodeError):
+            return finish({"ok": False, "message": "Worker stopped; delivery is unconfirmed. Check your device before retrying."})
+        return finish(result)
+    except UnicodeError:
+        return finish({"ok": False, "message": "Input must be valid UTF-8 text."})
+    except subprocess.TimeoutExpired:
+        return finish({"ok": False, "message": "Timed out; delivery is unconfirmed. Check your device before retrying."})
+    except OSError:
+        return finish({"ok": False, "message": "Cannot start the worker. Check the installation."})
+    except KeyboardInterrupt:
+        finish({"ok": False, "message": "Interrupted; delivery is unconfirmed. Check your device before retrying."})
+        return 130
+
+
+if __name__ == "__main__":
+    sys.exit(main())
