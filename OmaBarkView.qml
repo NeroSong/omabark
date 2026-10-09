@@ -2,13 +2,14 @@ import QtQuick
 import QtQuick.Controls as Controls
 import QtQuick.Layouts
 import qs.Commons
+import qs.Commons as Commons
 import qs.Ui as Ui
 
 ColumnLayout {
     id: root
     required property var backend
-    readonly property color secondaryTextColor: Qt.tint(Color.popups.background,
-        Qt.rgba(Color.foreground.r, Color.foreground.g, Color.foreground.b, 0.75))
+    readonly property color secondaryTextColor: Qt.tint(Commons.Color.popups.background,
+        Qt.rgba(Commons.Color.foreground.r, Commons.Color.foreground.g, Commons.Color.foreground.b, 0.75))
     property bool configuring: false
     property bool advanced: false
     readonly property bool setup: configuring || backend.devices.length === 0
@@ -68,7 +69,7 @@ ColumnLayout {
             spacing: Style.space(3)
             Text {
                 text: "OmaBark"
-                color: Color.foreground
+                color: Commons.Color.foreground
                 font.family: Style.font.family
                 font.pixelSize: Style.font.title
                 font.bold: true
@@ -77,7 +78,7 @@ ColumnLayout {
                 Layout.fillWidth: true
                 wrapMode: Text.WordWrap
                 text: qsTr("Send text to your Apple device.")
-                color: Qt.rgba(Color.foreground.r, Color.foreground.g, Color.foreground.b, 0.65)
+                color: Qt.rgba(Commons.Color.foreground.r, Commons.Color.foreground.g, Commons.Color.foreground.b, 0.65)
                 font.family: Style.font.family
                 font.pixelSize: Style.font.caption
             }
@@ -93,7 +94,7 @@ ColumnLayout {
             onClicked: root.setup ? root.goBack() : root.openSettings()
         }
     }
-    Rectangle { Layout.fillWidth: true; implicitHeight: 1; color: Color.foreground; opacity: 0.12 }
+    Rectangle { Layout.fillWidth: true; implicitHeight: 1; color: Commons.Color.foreground; opacity: 0.12 }
 
     ColumnLayout {
         visible: !root.setup
@@ -110,20 +111,20 @@ ColumnLayout {
                 wrapMode: TextEdit.Wrap
                 textFormat: TextEdit.PlainText
                 selectByMouse: true
-                color: Color.foreground
-                placeholderTextColor: Qt.rgba(Color.foreground.r, Color.foreground.g, Color.foreground.b, 0.65)
-                selectionColor: Style.selectionFillFor(Color.foreground, Color.accent)
-                selectedTextColor: Color.foreground
+                color: Commons.Color.foreground
+                placeholderTextColor: Qt.rgba(Commons.Color.foreground.r, Commons.Color.foreground.g, Commons.Color.foreground.b, 0.65)
+                selectionColor: Style.selectionFillFor(Commons.Color.foreground, Commons.Color.accent)
+                selectedTextColor: Commons.Color.foreground
                 font.family: Style.font.family
                 font.pixelSize: Style.font.body
                 padding: Style.space(12)
                 enabled: !root.backend.busy
                 Accessible.name: qsTr("Message")
                 background: Rectangle {
-                    color: Qt.rgba(Color.foreground.r, Color.foreground.g, Color.foreground.b, 0.035)
+                    color: Qt.rgba(Commons.Color.foreground.r, Commons.Color.foreground.g, Commons.Color.foreground.b, 0.035)
                     radius: Style.cornerRadius
                     border.width: 1
-                    border.color: message.activeFocus ? Color.accent : Qt.rgba(Color.foreground.r, Color.foreground.g, Color.foreground.b, 0.18)
+                    border.color: message.activeFocus ? Commons.Color.accent : Qt.rgba(Commons.Color.foreground.r, Commons.Color.foreground.g, Commons.Color.foreground.b, 0.18)
                 }
                 Keys.onPressed: function(event) {
                     if ((event.modifiers & Qt.ControlModifier) && (event.key === Qt.Key_Return || event.key === Qt.Key_Enter)) {
@@ -149,7 +150,7 @@ ColumnLayout {
                 spacing: Style.space(6)
                 Text {
                     text: root.backend.busy ? qsTr("Sending…") : qsTr("Send")
-                    color: Style.selectedStateColor(Color.foreground, Color.accent)
+                    color: Style.selectedStateColor(Commons.Color.foreground, Commons.Color.accent)
                     font.family: Style.font.family
                     font.pixelSize: Style.font.body
                     font.bold: true
@@ -168,7 +169,7 @@ ColumnLayout {
             Layout.fillWidth: true
             visible: root.messageBytes > 1800
             text: root.messageBytes > 32000 ? qsTr("Over 32 KB limit") : qsTr("Long text sends in numbered parts")
-            color: root.messageBytes > 32000 ? Color.urgent : Color.foreground
+            color: root.messageBytes > 32000 ? Commons.Color.urgent : Commons.Color.foreground
             wrapMode: Text.WordWrap
             font.family: Style.font.family
             font.pixelSize: Style.font.caption
@@ -209,7 +210,7 @@ ColumnLayout {
             fontSizeMode: Text.HorizontalFit
             minimumPixelSize: Math.max(8, Style.font.caption - 2)
             elide: Text.ElideRight
-            color: Qt.rgba(Color.foreground.r, Color.foreground.g, Color.foreground.b, 0.65)
+            color: Qt.rgba(Commons.Color.foreground.r, Commons.Color.foreground.g, Commons.Color.foreground.b, 0.65)
             font.family: Style.font.family
             font.pixelSize: Style.font.caption
         }
@@ -247,7 +248,7 @@ ColumnLayout {
             Layout.fillWidth: true
             text: qsTr("A test notification will be sent before saving. Keys stay in private local storage.")
             wrapMode: Text.WordWrap
-            color: Qt.rgba(Color.foreground.r, Color.foreground.g, Color.foreground.b, 0.65)
+            color: Qt.rgba(Commons.Color.foreground.r, Commons.Color.foreground.g, Commons.Color.foreground.b, 0.65)
             font.family: Style.font.family
             font.pixelSize: Style.font.caption
         }
@@ -255,7 +256,7 @@ ColumnLayout {
             Layout.fillWidth: true
             visible: unescape(encodeURIComponent(notificationTitleField.text)).length > 120
             text: qsTr("Title exceeds 120 bytes")
-            color: Color.urgent
+            color: Commons.Color.urgent
             wrapMode: Text.WordWrap
             font.family: Style.font.family
             font.pixelSize: Style.font.caption
@@ -282,7 +283,7 @@ ColumnLayout {
         text: root.setup ? root.backend.status : root.backend.shortStatus
         horizontalAlignment: root.setup ? Text.AlignLeft : Text.AlignHCenter
         textFormat: Text.PlainText
-        color: root.backend.failed ? Color.urgent : Color.accent
+        color: root.backend.failed ? Commons.Color.urgent : Commons.Color.accent
         wrapMode: Text.WordWrap
         font.family: Style.font.family
         font.pixelSize: Style.font.caption
